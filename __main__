@@ -1,0 +1,53 @@
+import telegram
+import os
+import time
+
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+owner_id = 287322046
+limit = 40
+
+
+def main():
+    telegram.token = "bot198334737:AAH3Z-0Gu1TqnVj6H8Zs3f4OS8u71JeX5Jc"
+    telegram.owner_id = owner_id
+    messages = telegram.get_updates()
+
+    if messages != []:
+        print(str(len(messages)) + " new messages was found")
+        message = messages[len(messages) - 1]["text"]
+        if message[0:9] == "/get_logs":
+            answer = get_post_owners(message[10:])
+        telegram.send(answer)
+
+    print("done!")
+
+
+def get_post_owners(count):
+    post_owner_file = open(os.path.join(THIS_FOLDER, "post_owner.txt"), "r")
+    post_owner = post_owner_file.readlines()
+    post_owner_file.close()
+
+    if count == "":
+        count = 9
+    else:
+        try:
+            count = int(count)
+            if count > len(post_owner) - 1:
+                count = len(post_owner) - 1
+        except:
+            return "It seems like parameter is not number, dude."
+
+    post_owner_string = ""
+    if count > limit:
+        count = limit
+        post_owner_string += "Have you got any mental disorders?\nYou can't get more than " + str(limit) + " records, so here you are:\n"
+
+    i = 0
+    while i < count:
+        post_owner_string += str(post_owner[i])
+        i += 1
+
+    return post_owner_string
+
+if __name__ == "__main__":
+    main()
