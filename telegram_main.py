@@ -155,5 +155,5 @@ def index_of(s, char):
     return -1
 
 
-if __name__ == "__main__":
+if __name__ == "telegram_main":
     main()
