@@ -9,6 +9,12 @@ limit = 40
 
 
 def main():
+    while True:
+        play()
+        time.sleep(1)
+
+
+def play():
     telegram.token = "bot198334737:AAH3Z-0Gu1TqnVj6H8Zs3f4OS8u71JeX5Jc"
     telegram.owner_id = owner_id
     messages = telegram.get_updates()
@@ -16,15 +22,25 @@ def main():
     if messages != []:
         print(str(len(messages)) + " new messages was found")
         message = messages[len(messages) - 1]["text"]
-        if message[0:9] == "/get_logs":
+        if message[:9] == "/get_logs":
             answer = get_post_owners(message[10:])
-        elif message[0:12] == "/get_victims":
+        elif message[:12] == "/get_victims":
             answer = get_victims(message[13:])
+        elif message[:11] == "/add_victim":
+            add_victim(message[12:])
+            answer = get_victims()
+        elif message[:11] == "/del_victim":
+            returned = del_victim(message[12:])
+            if returned == 0:
+                answer = get_victims()
+            else:
+                answer = str(returned)
         telegram.send(answer)
     print("done!")
 
 
 def get_post_owners(count):
+    count = count.strip()
     post_owner_file = open(os.path.join(THIS_FOLDER, "post_owner.txt"), "r")
     post_owner = post_owner_file.readlines()
     post_owner_file.close()
@@ -52,7 +68,8 @@ def get_post_owners(count):
     return post_owner_string
 
 
-def get_victims(with_last):
+def get_victims(with_last=""):
+    with_last = with_last.strip()
     victims = json.load(open(os.path.join(THIS_FOLDER, "victims.txt"), "r"))
     victims_str = ""
     i = 1
@@ -66,6 +83,29 @@ def get_victims(with_last):
         i += 1
 
     return victims_str
+
+
+def add_victim(pub_id):
+    pub_id = pub_id.strip()
+    victims = json.load(open(os.path.join(THIS_FOLDER, "victims.txt"), "r"))
+    new_victim = {"id": pub_id, "delta": 0, "last": 0}
+    victims.append(new_victim)
+    json.dump(victims, open(os.path.join(THIS_FOLDER, "victims.txt"), "w"))
+    return 0
+
+
+def del_victim(pub_num):
+    pub_num = pub_num.strip()
+    victims = json.load(open(os.path.join(THIS_FOLDER, "victims.txt"), "r"))
+
+    try:
+        pub_num = int(pub_num) - 1
+        del victims[pub_num]
+    except Exception as ex_msg:
+        return ex_msg
+
+    json.dump(victims, open(os.path.join(THIS_FOLDER, "victims.txt"), "w"))
+    return 0
 
 
 if __name__ == "__main__":
