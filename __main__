@@ -51,7 +51,7 @@ def play():
             else:
                 answer = str(returned)
         else:
-            message = "What a fuck are you talking about?"
+            answer = "What a fuck are you talking about?"
         telegram.send(answer)
     print("done!")
 
