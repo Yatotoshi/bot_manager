@@ -13,8 +13,8 @@ def main():
         time.sleep(1)
         try:
             play()
-        except:
-            telegram.send("What have you done? :(\nNow bot is down ((9(")
+        except Exception as ex_msg:
+            telegram.send("What have you done? :(\nNow bot is down ((9(\n")
             continue
 
 
@@ -53,15 +53,16 @@ def play():
         else:
             answer = "What a fuck are you talking about?"
         telegram.send(answer)
-    print("done!")
 
 
 def get_post_publisher(post_id):
     post_id = post_id.strip()
-
     post_owner_file = open(os.path.join(FILES_FOLDER, "post_owner.txt"), "r")
     post_owner = post_owner_file.read()
     post_owner_file.close()
+
+    if index_of(post_owner, post_id + " from") == -1:
+        return "Post " + post_id + "not found."
 
     right_side = post_owner[index_of(post_owner, post_id + " from -"):]
     post_owner_string = right_side[:index_of(right_side, "\n")]
@@ -155,5 +156,5 @@ def index_of(s, char):
     return -1
 
 
-if __name__ == "telegram_main":
+if __name__ == "__main__":
     main()
